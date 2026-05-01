@@ -13,16 +13,58 @@ Live: <https://rotating-animations.localhost> (via `just dev`).
 
 The "3D-ness" only exists at render time; the browser just flips through pre-computed text frames.
 
+## Prerequisites
+
+| Tool | Used for | Install |
+|---|---|---|
+| [Bun](https://bun.sh) ≥ 1.3 | runtime + package manager for `web/` | `curl -fsSL https://bun.sh/install \| bash` |
+| [just](https://github.com/casey/just) | task runner (`just <recipe>`) | `brew install just` |
+| [uv](https://docs.astral.sh/uv/) | runs Python converters with PEP-723 inline deps | `brew install uv` |
+| [Blender](https://www.blender.org/) ≥ 4.2 | renders the 3D models to PNG sequences | `brew install --cask blender` |
+
+The site itself (no re-render) only needs Bun + just. Re-rendering or adding a new animation also needs uv + Blender.
+
 ## Quick start
+
+Just view the site (uses the ASCII JSONs already committed under `web/src/`):
 
 ```sh
 just install   # bun install in web/
-just dev       # https dev server via portless
-just build     # vite build + nitro prerender
-just test      # vitest
+just dev-bare  # plain Vite dev server (random http port)
 ```
 
-Adding a new animation: see [`CLAUDE.md`](./CLAUDE.md) for the full pipeline (render command, converter choice, route wiring).
+Or `just dev` to run behind [portless](https://github.com/lukeed/portless) at `https://rotating-animations.localhost` — this prompts for sudo on first run to install a local CA, so prefer `dev-bare` for a quick look.
+
+```sh
+just build     # vite build + nitro prerender of every route
+just preview   # serve the built app
+just test      # vitest (currently no test files)
+```
+
+## Reproducing an animation from scratch
+
+Re-render and re-convert the penguin end-to-end:
+
+```sh
+# 1. render 60 frames (Blender, Cycles GPU; takes ~1–2 min on Apple Silicon)
+blender -b -P scripts/render_spin.py -- models/penguin.glb frames_penguin 60 upright
+
+# 2. convert PNGs → ASCII JSON (overwrites web/src/penguin.json)
+uv run scripts/to_ascii_generic.py frames_penguin web/src/penguin.json
+
+# 3. view it
+just dev-bare   # then open the printed URL and click "penguin"
+```
+
+Orient modes for `render_spin.py`:
+- `lay_flat` (default) — rotates the longest axis to +X, suits horizontally-elongated objects (hotdog).
+- `upright` — preserves Z-up, suits cups, animals, anything you don't want laid on its side.
+
+Converter choice (`scripts/to_ascii_*.py`):
+- **Per-model** (`to_ascii.py`, `to_ascii_mallard.py`, `to_ascii_penguin.py`, …) — hand-tuned RGB/HSV thresholds emit richer per-region classes (body / head / bill / …). Use when the model has a distinctive palette.
+- **Generic** (`to_ascii_generic.py`) — saturation splits cells into `solid` vs `tea`; suits mostly-white or low-contrast subjects.
+
+Adding a new animation (model → route): see [`CLAUDE.md`](./CLAUDE.md) for the full four-step wiring (route file, `__root.tsx` tabs array, `index.tsx` listing, `styles.css` block).
 
 ## Repo shape
 
