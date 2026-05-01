@@ -1,0 +1,31 @@
+# Render pipeline artifacts (regenerable from models/ + scripts/)
+frames/
+frames_*/
+*.blend1
+
+# One-off render exports
+screenshot.png
+spin_*.png
+v2_*.png
+
+# Web app build output and local state
+web/node_modules/
+web/dist/
+web/dist-ssr/
+web/.tanstack/
+web/.nitro/
+web/.output/
+web/.vinxi/
+web/.wrangler/
+web/__unconfig*
+
+# Local env / editor / OS noise
+*.log
+.env
+.env.local
+.DS_Store
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
