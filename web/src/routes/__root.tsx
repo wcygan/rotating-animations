@@ -9,6 +9,12 @@ const TABS = [
   { to: '/glizzy', label: 'glizzy' },
   { to: '/teacup', label: 'teacup' },
   { to: '/mallard', label: 'mallard' },
+  { to: '/duck', label: 'duck' },
+  { to: '/parrot', label: 'parrot' },
+  { to: '/penguin', label: 'penguin' },
+  { to: '/toucan', label: 'toucan' },
+  { to: '/hummingbird', label: 'hummingbird' },
+  { to: '/goose', label: 'goose' },
 ] as const
 
 export const Route = createRootRoute({

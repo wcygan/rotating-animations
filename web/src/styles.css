@@ -90,6 +90,96 @@ body {
 .mallard .collar { color: #f5ede0; } /* white neck ring */
 .mallard .eye    { color: #050505; } /* dark eyeball */
 
+.duck-page {
+  min-height: calc(100dvh - 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem 1rem;
+}
+.duck {
+  font-family: inherit;
+  font-size: clamp(6px, 1.1vw, 11px);
+  line-height: 1.05;
+  letter-spacing: 0;
+  white-space: pre;
+  margin: 0;
+  color: #5a3a1a;
+}
+.duck div { white-space: pre; }
+.duck .body   { color: #4a5a6a; } /* desaturated blue-gray */
+.duck .chest  { color: #6b3a22; } /* warm brown */
+.duck .head   { color: #1f7a3a; } /* emerald, slightly cooler than mallard */
+.duck .bill   { color: #e8b94a; } /* yellow — bill + feet share this class */
+.duck .collar { color: #f5ede0; } /* white neck ring */
+.duck .eye    { color: #050505; }
+
+.parrot-page,
+.penguin-page,
+.toucan-page,
+.hummingbird-page,
+.goose-page {
+  min-height: calc(100dvh - 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem 1rem;
+}
+.parrot,
+.penguin,
+.toucan,
+.hummingbird,
+.goose {
+  font-family: inherit;
+  font-size: clamp(6px, 1.1vw, 11px);
+  line-height: 1.05;
+  letter-spacing: 0;
+  white-space: pre;
+  margin: 0;
+}
+.parrot div,
+.penguin div,
+.toucan div,
+.hummingbird div,
+.goose div { white-space: pre; }
+
+.parrot         { color: #6b3a1a; }
+.parrot .red    { color: #d83a3a; } /* scarlet head and body */
+.parrot .yellow { color: #f6c43a; } /* shoulder band */
+.parrot .blue   { color: #4068c0; } /* wings and tail (lifted from #234a8c so it reads on dark bg) */
+.parrot .beak   { color: #b0b0b0; } /* light grey beak */
+.parrot .dark   { color: #2a2520; } /* eye and claws */
+
+.penguin         { color: #2a2520; }
+.penguin .body   { color: #2a2520; } /* black plumage */
+.penguin .belly  { color: #d8d4cc; } /* mid-grey belly (not pure white in this render) */
+.penguin .collar { color: #d4b040; } /* mustard collar patch */
+.penguin .beak   { color: #d8704a; } /* coral beak */
+
+.toucan        { color: #8a8a8a; }
+.toucan .body  { color: #8a8a8a; } /* dark grey body — lifted for legibility */
+.toucan .chest { color: #e8e8e8; } /* white chest patch */
+.toucan .beak  { color: #f0c898; } /* peach beak */
+.toucan .tip   { color: #2a2520; } /* black beak tip and eye (small cells) */
+.toucan .feet  { color: #b8c8e0; } /* pale lavender feet */
+
+.hummingbird       { color: #2a3530; }
+.hummingbird .head { color: #4060c8; } /* royal blue head */
+.hummingbird .body { color: #4ea878; } /* teal-green torso */
+.hummingbird .wing { color: #9a82c0; } /* dusty purple wings — lifted */
+.hummingbird .tail { color: #c9742e; } /* warm orange tail */
+.hummingbird .dark { color: #2a2520; } /* eye and beak */
+
+.goose        { color: #3a3530; }
+.goose .neck  { color: #5a5550; } /* black neck and head — lifted for legibility */
+.goose .cheek { color: #c8b89a; } /* lit highlight band (no true white in this render) */
+.goose .back  { color: #6b4a28; } /* dark warm brown — lifted */
+.goose .chest { color: #8a7a64; } /* lighter tan underside */
+
 .tagline {
   font-size: 0.85rem;
   letter-spacing: 0.2em;

@@ -9,14 +9,35 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ToucanRouteImport } from './routes/toucan'
 import { Route as TeacupRouteImport } from './routes/teacup'
+import { Route as PenguinRouteImport } from './routes/penguin'
+import { Route as ParrotRouteImport } from './routes/parrot'
 import { Route as MallardRouteImport } from './routes/mallard'
+import { Route as HummingbirdRouteImport } from './routes/hummingbird'
+import { Route as GooseRouteImport } from './routes/goose'
 import { Route as GlizzyRouteImport } from './routes/glizzy'
+import { Route as DuckRouteImport } from './routes/duck'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ToucanRoute = ToucanRouteImport.update({
+  id: '/toucan',
+  path: '/toucan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeacupRoute = TeacupRouteImport.update({
   id: '/teacup',
   path: '/teacup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PenguinRoute = PenguinRouteImport.update({
+  id: '/penguin',
+  path: '/penguin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParrotRoute = ParrotRouteImport.update({
+  id: '/parrot',
+  path: '/parrot',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MallardRoute = MallardRouteImport.update({
@@ -24,9 +45,24 @@ const MallardRoute = MallardRouteImport.update({
   path: '/mallard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HummingbirdRoute = HummingbirdRouteImport.update({
+  id: '/hummingbird',
+  path: '/hummingbird',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GooseRoute = GooseRouteImport.update({
+  id: '/goose',
+  path: '/goose',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GlizzyRoute = GlizzyRouteImport.update({
   id: '/glizzy',
   path: '/glizzy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DuckRoute = DuckRouteImport.update({
+  id: '/duck',
+  path: '/duck',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,45 +73,121 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/duck': typeof DuckRoute
   '/glizzy': typeof GlizzyRoute
+  '/goose': typeof GooseRoute
+  '/hummingbird': typeof HummingbirdRoute
   '/mallard': typeof MallardRoute
+  '/parrot': typeof ParrotRoute
+  '/penguin': typeof PenguinRoute
   '/teacup': typeof TeacupRoute
+  '/toucan': typeof ToucanRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/duck': typeof DuckRoute
   '/glizzy': typeof GlizzyRoute
+  '/goose': typeof GooseRoute
+  '/hummingbird': typeof HummingbirdRoute
   '/mallard': typeof MallardRoute
+  '/parrot': typeof ParrotRoute
+  '/penguin': typeof PenguinRoute
   '/teacup': typeof TeacupRoute
+  '/toucan': typeof ToucanRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/duck': typeof DuckRoute
   '/glizzy': typeof GlizzyRoute
+  '/goose': typeof GooseRoute
+  '/hummingbird': typeof HummingbirdRoute
   '/mallard': typeof MallardRoute
+  '/parrot': typeof ParrotRoute
+  '/penguin': typeof PenguinRoute
   '/teacup': typeof TeacupRoute
+  '/toucan': typeof ToucanRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/glizzy' | '/mallard' | '/teacup'
+  fullPaths:
+    | '/'
+    | '/duck'
+    | '/glizzy'
+    | '/goose'
+    | '/hummingbird'
+    | '/mallard'
+    | '/parrot'
+    | '/penguin'
+    | '/teacup'
+    | '/toucan'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/glizzy' | '/mallard' | '/teacup'
-  id: '__root__' | '/' | '/glizzy' | '/mallard' | '/teacup'
+  to:
+    | '/'
+    | '/duck'
+    | '/glizzy'
+    | '/goose'
+    | '/hummingbird'
+    | '/mallard'
+    | '/parrot'
+    | '/penguin'
+    | '/teacup'
+    | '/toucan'
+  id:
+    | '__root__'
+    | '/'
+    | '/duck'
+    | '/glizzy'
+    | '/goose'
+    | '/hummingbird'
+    | '/mallard'
+    | '/parrot'
+    | '/penguin'
+    | '/teacup'
+    | '/toucan'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DuckRoute: typeof DuckRoute
   GlizzyRoute: typeof GlizzyRoute
+  GooseRoute: typeof GooseRoute
+  HummingbirdRoute: typeof HummingbirdRoute
   MallardRoute: typeof MallardRoute
+  ParrotRoute: typeof ParrotRoute
+  PenguinRoute: typeof PenguinRoute
   TeacupRoute: typeof TeacupRoute
+  ToucanRoute: typeof ToucanRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/toucan': {
+      id: '/toucan'
+      path: '/toucan'
+      fullPath: '/toucan'
+      preLoaderRoute: typeof ToucanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/teacup': {
       id: '/teacup'
       path: '/teacup'
       fullPath: '/teacup'
       preLoaderRoute: typeof TeacupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/penguin': {
+      id: '/penguin'
+      path: '/penguin'
+      fullPath: '/penguin'
+      preLoaderRoute: typeof PenguinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parrot': {
+      id: '/parrot'
+      path: '/parrot'
+      fullPath: '/parrot'
+      preLoaderRoute: typeof ParrotRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mallard': {
@@ -85,11 +197,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MallardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hummingbird': {
+      id: '/hummingbird'
+      path: '/hummingbird'
+      fullPath: '/hummingbird'
+      preLoaderRoute: typeof HummingbirdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/goose': {
+      id: '/goose'
+      path: '/goose'
+      fullPath: '/goose'
+      preLoaderRoute: typeof GooseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/glizzy': {
       id: '/glizzy'
       path: '/glizzy'
       fullPath: '/glizzy'
       preLoaderRoute: typeof GlizzyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/duck': {
+      id: '/duck'
+      path: '/duck'
+      fullPath: '/duck'
+      preLoaderRoute: typeof DuckRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -104,9 +237,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DuckRoute: DuckRoute,
   GlizzyRoute: GlizzyRoute,
+  GooseRoute: GooseRoute,
+  HummingbirdRoute: HummingbirdRoute,
   MallardRoute: MallardRoute,
+  ParrotRoute: ParrotRoute,
+  PenguinRoute: PenguinRoute,
   TeacupRoute: TeacupRoute,
+  ToucanRoute: ToucanRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

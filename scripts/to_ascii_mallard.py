@@ -55,6 +55,54 @@ def classify(r: int, g: int, b: int) -> str | None:
     return "chest"
 
 
+def synthesize_eyes(
+    cells: list[list[tuple[str, str] | None]],
+) -> list[tuple[int, int]]:
+    """Pick (cy, cx) positions where fake eye dots should be drawn.
+
+    The model only has eye geometry on the sides of the head, so head-on /
+    back-on rotation frames render no black eye pixels at all. This synthesizes
+    two black dots in the upper head region of every frame so the duck always
+    has visible eyes. Anchored to the bill when visible (bill direction tells
+    us which side the head is facing); falls back to head centroid otherwise.
+    """
+    head_cells = [(cy, cx) for cy, row in enumerate(cells)
+                  for cx, c in enumerate(row) if c and c[0] == "head"]
+    bill_cells = [(cy, cx) for cy, row in enumerate(cells)
+                  for cx, c in enumerate(row) if c and c[0] == "bill"]
+    if not head_cells:
+        return []
+
+    h_cy = sum(cy for cy, _ in head_cells) / len(head_cells)
+    h_cx = sum(cx for _, cx in head_cells) / len(head_cells)
+
+    if bill_cells:
+        b_cy = sum(cy for cy, _ in bill_cells) / len(bill_cells)
+        b_cx = sum(cx for _, cx in bill_cells) / len(bill_cells)
+        # Vector from bill back into the head. Eyes sit ~40% of that vector
+        # behind the bill, raised one cell above the bill line.
+        dx = h_cx - b_cx
+        dy = h_cy - b_cy
+        anchor_cx = b_cx + dx * 0.4
+        anchor_cy = b_cy + dy * 0.4 - 1
+        # If the bill is roughly head-on (vector tiny), place two symmetric
+        # eyes on either side; otherwise the head is in profile, single eye.
+        if abs(dx) < 1.5:
+            return [
+                (round(anchor_cy), round(anchor_cx - 3)),
+                (round(anchor_cy), round(anchor_cx + 3)),
+            ]
+        return [(round(anchor_cy), round(anchor_cx))]
+
+    # No bill visible: head facing away. Plant eye(s) symmetrically near the
+    # top of the head silhouette so the back of the head still reads as a duck.
+    top_cy = min(cy for cy, _ in head_cells)
+    return [
+        (top_cy + 2, round(h_cx) - 2),
+        (top_cy + 2, round(h_cx) + 2),
+    ]
+
+
 def convert(png_path: Path) -> tuple[list[str], Counter]:
     img = Image.open(png_path).convert("RGBA")
     W, H = img.size
@@ -62,19 +110,11 @@ def convert(png_path: Path) -> tuple[list[str], Counter]:
     cell_h = H / ROWS
     px = img.load()
     counts: Counter = Counter()
-    lines: list[str] = []
+    cells: list[list[tuple[str, str] | None]] = [
+        [None] * COLS for _ in range(ROWS)
+    ]
+
     for cy in range(ROWS):
-        parts: list[str] = []
-        buf = ""
-        cur: str | None = None
-
-        def flush():
-            nonlocal buf, cur
-            if buf:
-                parts.append(f'<span class="{cur}">{buf}</span>')
-                buf = ""
-                cur = None
-
         for cx in range(COLS):
             x0, x1 = int(cx * cell_w), int((cx + 1) * cell_w)
             y0, y1 = int(cy * cell_h), int((cy + 1) * cell_h)
@@ -92,18 +132,13 @@ def convert(png_path: Path) -> tuple[list[str], Counter]:
                     cls = classify(r, g, b)
                     if cls is None:
                         continue
-                    # Spatially gate the eye class — see EYE_MAX_ROW.
                     if cls == "eye" and cy > EYE_MAX_ROW:
                         cls = "chest"
                     cls_counts[cls] += 1
                     n += 1
             if n == 0:
-                flush()
-                parts.append(" ")
                 continue
             total = sum(cls_counts.values())
-            # Bias: small but distinctive features win at low presence.
-            # Order = visual priority. Eye is tiny (~3px wide) so threshold low.
             if cls_counts["eye"] / total >= 0.08:
                 dominant = "eye"
             elif cls_counts["bill"] / total >= 0.12:
@@ -117,17 +152,41 @@ def convert(png_path: Path) -> tuple[list[str], Counter]:
             else:
                 dominant = cls_counts.most_common(1)[0][0]
             counts[dominant] += 1
-            # Alpha-based density: opaque cells get the densest chars, edges
-            # taper. This keeps a dark-bodied duck from looking ghostly.
             avg_a = a_sum / cell_pixels
             density = min(1.0, max(0.0, (avg_a / 255 - 0.2) / 0.8))
             idx = int(density * (len(RAMP) - 1))
-            ch = RAMP[idx]
-            if dominant != cur:
-                flush()
-                cur = dominant
+            cells[cy][cx] = (dominant, RAMP[idx])
+
+    # Synthesize eye dots — one per frame minimum, two for head-on / back-on.
+    for ey, ex in synthesize_eyes(cells):
+        if 0 <= ey < ROWS and 0 <= ex < COLS and cells[ey][ex] is not None:
+            cells[ey][ex] = ("eye", "@")
+            counts["eye"] += 1
+
+    # Stringify with span-merging.
+    lines: list[str] = []
+    for cy in range(ROWS):
+        parts: list[str] = []
+        buf = ""
+        cur: str | None = None
+        for cx in range(COLS):
+            cell = cells[cy][cx]
+            if cell is None:
+                if buf:
+                    parts.append(f'<span class="{cur}">{buf}</span>')
+                    buf = ""
+                    cur = None
+                parts.append(" ")
+                continue
+            cls, ch = cell
+            if cls != cur:
+                if buf:
+                    parts.append(f'<span class="{cur}">{buf}</span>')
+                    buf = ""
+                cur = cls
             buf += ch
-        flush()
+        if buf:
+            parts.append(f'<span class="{cur}">{buf}</span>')
         lines.append("".join(parts))
     return lines, counts
 
